@@ -1,0 +1,7 @@
+D:\Documents\SoftwareProjects\GameBoyCPU\GameBoyCPU\GameBoyCPU\obj\Debug\GameBoyCPU.csprojAssemblyReference.cache
+D:\Documents\SoftwareProjects\GameBoyCPU\GameBoyCPU\GameBoyCPU\obj\Debug\GameBoyCPU.csproj.CoreCompileInputs.cache
+D:\Documents\SoftwareProjects\GameBoyCPU\GameBoyCPU\GameBoyCPU\bin\Debug\GameBoyCPU.exe.config
+D:\Documents\SoftwareProjects\GameBoyCPU\GameBoyCPU\GameBoyCPU\bin\Debug\GameBoyCPU.exe
+D:\Documents\SoftwareProjects\GameBoyCPU\GameBoyCPU\GameBoyCPU\bin\Debug\GameBoyCPU.pdb
+D:\Documents\SoftwareProjects\GameBoyCPU\GameBoyCPU\GameBoyCPU\obj\Debug\GameBoyCPU.exe
+D:\Documents\SoftwareProjects\GameBoyCPU\GameBoyCPU\GameBoyCPU\obj\Debug\GameBoyCPU.pdb
