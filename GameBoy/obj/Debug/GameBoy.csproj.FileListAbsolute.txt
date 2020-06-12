@@ -1,7 +1,0 @@
-D:\Documents\SoftwareProjects\GameBoy\GameBoy\bin\Debug\GameBoyCPU.exe.config
-D:\Documents\SoftwareProjects\GameBoy\GameBoy\bin\Debug\GameBoyCPU.exe
-D:\Documents\SoftwareProjects\GameBoy\GameBoy\bin\Debug\GameBoyCPU.pdb
-D:\Documents\SoftwareProjects\GameBoy\GameBoy\obj\Debug\GameBoy.csprojAssemblyReference.cache
-D:\Documents\SoftwareProjects\GameBoy\GameBoy\obj\Debug\GameBoy.csproj.CoreCompileInputs.cache
-D:\Documents\SoftwareProjects\GameBoy\GameBoy\obj\Debug\GameBoyCPU.exe
-D:\Documents\SoftwareProjects\GameBoy\GameBoy\obj\Debug\GameBoyCPU.pdb
