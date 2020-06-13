@@ -1,28 +1,17 @@
 ﻿
 using GameBoy.Architecture;
+using System;
 
-namespace GameBoyCPU.Architecture
+namespace GameBoy.Architecture
 {
-    public interface Instruction
+    public class Instruction
     {
-        void Execute(Registers registers);
-    }
-
-    public class ADD: Instruction
-    {
-        private Register Target { get; }
-
-        public ADD(Register target)
+        private OpCode _opCode;
+        public Instruction(OpCode opCode)
         {
-            Target = target;
+            _opCode = opCode;
         }
 
-        public void Execute(Registers registers)
-        {
-            byte value = registers.ReadByte(Target);
-            int intermediate = registers.A + registers.ReadByte(Target);
-            byte new_value = (byte)(intermediate & 0xFF);
-            registers.A = (byte) new_value;
-        }
+        public void Execute(CPU cpu) => _opCode.Operation(cpu);
     }
 }

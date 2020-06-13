@@ -1,5 +1,4 @@
-﻿using GameBoyCPU.Architecture;
-using System;
+﻿using System;
 using System.Runtime.InteropServices;
 
 namespace GameBoy.Architecture
@@ -26,16 +25,6 @@ namespace GameBoy.Architecture
         [FieldOffset(8)] public ushort SP;
         [FieldOffset(10)] public ushort PC;
 
-        public FlagsRegister GetFlagRegister()
-        {
-            return new FlagsRegister(F);
-        }
-
-        public void SetFlagRegister(FlagsRegister fr)
-        {
-            F = fr.GetByteValue();
-        }
-
         public byte ReadByte(Register target)
         {
             switch (target)
@@ -60,11 +49,27 @@ namespace GameBoy.Architecture
                     throw new ArgumentException("Unknown 8 bit register.");
             }
         }
+
+        public void SetFlags(RegisterFlags flags)
+        {
+            F |= (byte)flags;
+        }
     }
 
     public enum Register
     {
         A, F, B, C, D, E, H, L,
         AF, BC, DE, HL, SP, PC
+    }
+
+    [Flags]
+    public enum RegisterFlags: byte
+    {
+        None = 0,
+        Z = 1 << 7,
+        N = 1 << 6,
+        H = 1 << 5,
+        C = 1 << 4,
+        All = Z | N | H | C
     }
 }
