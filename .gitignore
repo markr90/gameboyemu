@@ -3,3 +3,6 @@ GameBoy/bin/
 GameBoy/obj/
 GameBoy/Properties/
 packages/
+GameBoyTests/Properties/
+GameBoyTests/obj/
+GameBoyTests/bin/
