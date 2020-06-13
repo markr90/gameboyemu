@@ -10,8 +10,8 @@ namespace GameBoy
         static void Main(string[] args)
         {
             CPU cpu = new CPU();
-            cpu.registers.A = 16;
-            cpu.registers.B = 16;
+            cpu.registers.A = 15;
+            cpu.registers.B = 1;
 
             cpu.PrintRegister();
             Console.WriteLine();

@@ -49,9 +49,10 @@
     <Compile Include="Architecture\Disassembler.cs" />
     <Compile Include="Architecture\OpCode.cs" />
     <Compile Include="Architecture\OpCodes.cs" />
+    <Compile Include="Architecture\RegisterFlags.cs" />
     <Compile Include="Architecture\Registers.cs" />
     <Compile Include="Architecture\Memory.cs" />
-    <Compile Include="Program.cs" />
+    <Compile Include="GameBoy.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

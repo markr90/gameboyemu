@@ -50,9 +50,35 @@ namespace GameBoy.Architecture
             }
         }
 
+        public void Reset()
+        {
+            A = B = C = D = E = F = H = L = 0;
+        }
+
+        public void ClearFlags(RegisterFlags flags)
+        {
+            F &= (byte) ~(byte)flags;
+        }
+
         public void SetFlags(RegisterFlags flags)
         {
             F |= (byte)flags;
+        }
+
+        public bool AreFlagsSet(RegisterFlags flags)
+        {
+            return (F & (byte)flags) == (byte)flags;
+        }
+
+        public override string ToString()
+        {
+            return string.Format("AF: {0:X4}\r\n" +
+                                 "BC: {1:X4}\r\n" +
+                                 "DE: {2:X4}\r\n" +
+                                 "HL: {3:X4}\r\n" +
+                                 "PC: {4:X4}\r\n" +
+                                 "SP: {5:X4}\r\n" +
+                                 AF, BC, DE, HL, PC, SP);
         }
     }
 
@@ -60,16 +86,5 @@ namespace GameBoy.Architecture
     {
         A, F, B, C, D, E, H, L,
         AF, BC, DE, HL, SP, PC
-    }
-
-    [Flags]
-    public enum RegisterFlags: byte
-    {
-        None = 0,
-        Z = 1 << 7,
-        N = 1 << 6,
-        H = 1 << 5,
-        C = 1 << 4,
-        All = Z | N | H | C
     }
 }

@@ -5,6 +5,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+using static GameBoy.Architecture.RegisterFlags;
+
 namespace GameBoy.Architecture
 {
 
@@ -24,16 +26,16 @@ namespace GameBoy.Architecture
             int carryBits = a ^ b ^ intermediate;
             byte result = (byte)(intermediate & 0xFF);
 
-            RegisterFlags flags = RegisterFlags.None;
+            RegisterFlags flags = None;
 
             if ((carryBits & 0x100) == 0x100)
-                flags |= RegisterFlags.C;
+                flags |= C;
 
             if ((carryBits & 0x10) == 0x10)
-                flags |= RegisterFlags.H;
+                flags |= H;
 
             if (result == 0)
-                flags |= RegisterFlags.Z;
+                flags |= Z;
 
             _registers.SetFlags(flags);
 
@@ -43,7 +45,16 @@ namespace GameBoy.Architecture
 
         public byte Add(byte targetValue)
         {
+            _registers.ClearFlags(Z | H | C);
+            _registers.SetFlags(None);
             return Perform(_registers.A, targetValue, (x, y) => x + y);
+        }
+
+        public byte Sub(byte targetValue)
+        {
+            _registers.ClearFlags(Z | H | C);
+            _registers.SetFlags(N);
+            return Perform(_registers.A, targetValue, (x, y) => x - y);
         }
     }
 }

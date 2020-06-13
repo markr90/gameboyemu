@@ -10,10 +10,12 @@ namespace GameBoy.Architecture
     public delegate void Operation(CPU cpu);
     public class OpCode
     {
-        public Operation Operation { get; }
-        public OpCode(Operation operation)
+        public readonly Operation Operation;
+        public readonly int ClockCycles;
+        public OpCode(int clockCycles, Operation operation)
         {
             Operation = operation;
+            ClockCycles = clockCycles;
         }
     }
 }

@@ -19,5 +19,17 @@ namespace GameBoy.Architecture
         {
             return _memory[address];
         }
+
+        public byte[] ReadBytes(ushort address, int length)
+        {
+            byte[] buffer = new byte[length];
+
+            for (int i = 0; i < length; i++)
+            {
+                buffer[i] = ReadByte((ushort)(address + i));
+            }
+
+            return buffer;
+        }
     }
 }

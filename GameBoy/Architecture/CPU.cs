@@ -1,5 +1,6 @@
 ﻿using GameBoy.Architecture;
 using System;
+using System.Diagnostics.Contracts;
 using System.Dynamic;
 
 namespace GameBoy.Architecture
@@ -39,16 +40,26 @@ namespace GameBoy.Architecture
             return disassembler.ReadInstruction(registers.PC);
         }
 
+        public ushort ReadImmediate16()
+        {
+            return BitConverter.ToUInt16(ReadImmediateBytes(2), 0);
+        }
+
+        public byte ReadImmediate8()
+        {
+            return ReadImmediateBytes(1)[0];
+        }
+
+        private byte[] ReadImmediateBytes(int length)
+        {
+            byte[] buffer = memory.ReadBytes(registers.PC, 2);
+            registers.PC += (ushort) length;
+            return buffer;
+        }
+
         public void PrintRegister()
         {
-            Console.WriteLine("A = " + Convert.ToString(registers.A, 2).PadLeft(8, '0'));
-            Console.WriteLine("F = " + Convert.ToString(registers.F, 2).PadLeft(8, '0'));
-            Console.WriteLine("B = " + Convert.ToString(registers.B, 2).PadLeft(8, '0'));
-            Console.WriteLine("C = " + Convert.ToString(registers.C, 2).PadLeft(8, '0'));
-            Console.WriteLine("D = " + Convert.ToString(registers.D, 2).PadLeft(8, '0'));
-            Console.WriteLine("E = " + Convert.ToString(registers.E, 2).PadLeft(8, '0'));
-            Console.WriteLine("H = " + Convert.ToString(registers.H, 2).PadLeft(8, '0'));
-            Console.WriteLine("L = " + Convert.ToString(registers.L, 2).PadLeft(8, '0'));
+            Console.WriteLine(registers.ToString());
         }
     }
 }
