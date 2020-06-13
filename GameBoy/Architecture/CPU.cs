@@ -7,11 +7,16 @@ namespace GameBoy.Architecture
 {
     public class CPU
     {
+        private const double OfficalClockFrequency = 4194304;
+
         public Registers registers { get; }
         public Memory memory { get; }
         private Disassembler disassembler;
         private Instruction _nextInstruction;
         public readonly Alu Alu;
+
+        public readonly double CyclesPerSecond = OfficalClockFrequency;
+        private ulong _ticks;
 
         public CPU()
         {
@@ -23,15 +28,21 @@ namespace GameBoy.Architecture
 
         public void Step()
         {
+            int cycles;
             try
             {
                 _nextInstruction = NextInstruction();
-                _nextInstruction.Execute(this);
+                cycles = _nextInstruction.Execute(this);
             }
             catch
             {
                 Console.WriteLine("Instruction not found!");
             }
+        }
+
+        public void SetPC(ushort pc)
+        {
+            registers.PC = pc;
         }
 
         private Instruction NextInstruction()

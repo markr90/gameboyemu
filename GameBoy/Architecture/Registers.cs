@@ -3,7 +3,7 @@ using System.Runtime.InteropServices;
 
 namespace GameBoy.Architecture
 {
-    [StructLayout(LayoutKind.Explicit, Pack = 1)]
+    [StructLayout(LayoutKind.Explicit)]
     public class Registers
     {
         [FieldOffset(0)] public byte A;
@@ -77,7 +77,7 @@ namespace GameBoy.Architecture
                                  "DE: {2:X4}\r\n" +
                                  "HL: {3:X4}\r\n" +
                                  "PC: {4:X4}\r\n" +
-                                 "SP: {5:X4}\r\n" +
+                                 "SP: {5:X4}\r\n",
                                  AF, BC, DE, HL, PC, SP);
         }
     }

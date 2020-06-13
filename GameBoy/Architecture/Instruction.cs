@@ -12,6 +12,6 @@ namespace GameBoy.Architecture
             _opCode = opCode;
         }
 
-        public void Execute(CPU cpu) => _opCode.Operation(cpu);
+        public int Execute(CPU cpu) => _opCode.Operation(cpu);
     }
 }

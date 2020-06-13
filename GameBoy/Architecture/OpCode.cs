@@ -7,12 +7,18 @@ using System.Threading.Tasks;
 
 namespace GameBoy.Architecture
 {
-    public delegate void Operation(CPU cpu);
+    public delegate void OperationDef(CPU cpu);
+    public delegate int Operation(CPU cpu);
     public class OpCode
     {
         public readonly Operation Operation;
-        public readonly int ClockCycles;
-        public OpCode(int clockCycles, Operation operation)
+        private readonly int ClockCycles;
+
+        public OpCode(int clockCycles, OperationDef operation)
+            : this(clockCycles, cpu => { operation(cpu); return clockCycles; })
+        {
+        }
+        private OpCode(int clockCycles, Operation operation)
         {
             Operation = operation;
             ClockCycles = clockCycles;

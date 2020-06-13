@@ -45,6 +45,7 @@
   <ItemGroup>
     <Compile Include="Architecture\Alu.cs" />
     <Compile Include="Architecture\CPU.cs" />
+    <Compile Include="Architecture\IClock.cs" />
     <Compile Include="Architecture\Instruction.cs" />
     <Compile Include="Architecture\Disassembler.cs" />
     <Compile Include="Architecture\OpCode.cs" />
