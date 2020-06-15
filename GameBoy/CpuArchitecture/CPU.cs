@@ -65,5 +65,8 @@ namespace GameBoy.CpuArchitecture
         {
             Console.WriteLine(Registers.ToBitString());
         }
+
+        public void Stop()
+        { }
     }
 }

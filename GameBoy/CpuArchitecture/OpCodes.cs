@@ -23,10 +23,36 @@ namespace GameBoy.CpuArchitecture
             new OpCode(0x0C, 4,  0, (cpu, i) => cpu.Registers.C = cpu.Alu.Increment(cpu.Registers.C)),
             new OpCode(0x0D, 4,  0, (cpu, i) => cpu.Registers.C = cpu.Alu.Decrement(cpu.Registers.C)),
             new OpCode(0x0E, 8,  1, (cpu, i) => cpu.Registers.C = i.Operand8),
-            // TODO: Implement 0x0F
+            // TODO: Implement 0x0F RRCA
 
             // 0x10 - 0x1F
-            new OpCode(0x10, 4,  1, (cpu, i) => )
+            new OpCode(0x10, 4,  0, (cpu, i) => cpu.Stop()),
+            new OpCode(0x11, 12, 2, (cpu, i) => cpu.Registers.DE = i.Operand16),
+            new OpCode(0x12, 8,  0, (cpu, i) => cpu.MemController.WriteByte(cpu.Registers.DE, cpu.Registers.A)),
+            new OpCode(0x13, 8,  0, (cpu, i) => cpu.Registers.DE = cpu.Alu.Increment(cpu.Registers.DE)),
+            new OpCode(0x14, 4,  0, (cpu, i) => cpu.Registers.D = cpu.Alu.Increment(cpu.Registers.D)),
+            new OpCode(0x15, 4,  0, (cpu, i) => cpu.Registers.D = cpu.Alu.Decrement(cpu.Registers.D)),
+            new OpCode(0x16, 8,  1, (cpu, i) => cpu.Registers.D = i.Operand8),
+            // TODO implement 0x17 RLA
+            // TODO implement 0x18 JR r8
+            new OpCode(0x19, 8,  0, (cpu, i) => cpu.Registers.HL = cpu.Alu.Add(cpu.Registers.HL, cpu.Registers.DE)),
+            new OpCode(0x1A, 8,  0, (cpu, i) => cpu.Registers.A = cpu.MemController.ReadByte(cpu.Registers.DE)),
+            new OpCode(0x1B, 8,  0, (cpu, i) => cpu.Registers.DE = cpu.Alu.Decrement(cpu.Registers.DE)),
+            new OpCode(0x1C, 4,  0, (cpu, i) => cpu.Registers.E = cpu.Alu.Increment(cpu.Registers.E)),
+            new OpCode(0x1D, 4,  0, (cpu, i) => cpu.Registers.E = cpu.Alu.Decrement(cpu.Registers.E)),
+            new OpCode(0x1E, 8,  1, (cpu, i) => cpu.Registers.E = i.Operand8),
+            // TODO implement 0x1F RRA
+
+            // 0x20 - 0x2F
+            // TODO 0x20 JR NZ,r8
+            new OpCode(0x21, 12, 2, (cpu, i) => cpu.Registers.HL = i.Operand16),
+            new OpCode(0x22, 8,  0, (cpu, i) => {
+                cpu.MemController.WriteByte(cpu.Registers.HL, cpu.Registers.A);
+                cpu.Registers.HL = cpu.Alu.Increment(cpu.Registers.HL);
+            }),
+            new OpCode(0x23, 8,  0, (cpu, i) => cpu.Registers.HL = cpu.Alu.Increment(cpu.Registers.HL)),
+            new OpCode(0x24, 4,  0, (cpu, i) => cpu.Registers.H = cpu.Alu.Increment(cpu.Registers.H)),
+
 
             // 0x80 - 0x8F
             new OpCode(0x80, 4,  0, (cpu, i) => cpu.Registers.A = cpu.Alu.Add(cpu.Registers.B)),
