@@ -6,8 +6,8 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{90FFB51F-0585-46B5-8B9C-B159ECEC010D}</ProjectGuid>
     <OutputType>Exe</OutputType>
-    <RootNamespace>GameBoyCPU</RootNamespace>
-    <AssemblyName>GameBoyCPU</AssemblyName>
+    <RootNamespace>GameBoy</RootNamespace>
+    <AssemblyName>GameBoy</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
@@ -43,16 +43,19 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Architecture\Alu.cs" />
-    <Compile Include="Architecture\CPU.cs" />
-    <Compile Include="Architecture\IClock.cs" />
-    <Compile Include="Architecture\Instruction.cs" />
-    <Compile Include="Architecture\Disassembler.cs" />
-    <Compile Include="Architecture\OpCode.cs" />
-    <Compile Include="Architecture\OpCodes.cs" />
-    <Compile Include="Architecture\RegisterFlags.cs" />
-    <Compile Include="Architecture\Registers.cs" />
-    <Compile Include="Architecture\Memory.cs" />
+    <Compile Include="CpuArchitecture\Alu.cs" />
+    <Compile Include="CpuArchitecture\CPU.cs" />
+    <Compile Include="CpuArchitecture\IClock.cs" />
+    <Compile Include="CpuArchitecture\Instruction.cs" />
+    <Compile Include="CpuArchitecture\Disassembler.cs" />
+    <Compile Include="CpuArchitecture\OpCode.cs" />
+    <Compile Include="CpuArchitecture\OpCodes.cs" />
+    <Compile Include="CpuArchitecture\RegisterFlags.cs" />
+    <Compile Include="CpuArchitecture\Registers.cs" />
+    <Compile Include="Device\Memory.cs" />
+    <Compile Include="CpuArchitecture\MemoryController.cs" />
+    <Compile Include="Device\Device.cs" />
+    <Compile Include="Device\IMemoryBus.cs" />
     <Compile Include="GameBoy.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

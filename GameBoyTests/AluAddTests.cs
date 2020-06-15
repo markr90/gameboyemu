@@ -10,6 +10,7 @@ namespace GameBoyTests
 {
     public class AluAddTests
     {
+        // byte + byte = byte
         [Fact]
         public void When_HalfOverFlow_Expect_HalfCarryFlagSet()
         {
@@ -33,7 +34,7 @@ namespace GameBoyTests
         }
 
         [Fact]
-        public void When_ResultIsZero_Expect_ZeroFlagSet()
+        public void When_ResultIsZero_Expect_ZeroAndCarryFlagSet()
         {
             Registers registers = new Registers();
             registers.A = 255;
@@ -41,6 +42,7 @@ namespace GameBoyTests
             Alu alu = new Alu(registers);
             registers.A = alu.Add(registers.B);
             Assert.True(registers.AreFlagsSet(RegisterFlags.Z));
+            Assert.True(registers.AreFlagsSet(RegisterFlags.C));
         }
     }
 }

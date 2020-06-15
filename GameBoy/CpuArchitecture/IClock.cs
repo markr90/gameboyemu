@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace GameBoy.Architecture
+namespace GameBoy.CpuArchitecture
 {
     public interface IClock
     {
