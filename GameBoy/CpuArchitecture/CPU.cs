@@ -17,6 +17,7 @@ namespace GameBoy.CpuArchitecture
 
         public readonly double CyclesPerSecond = OfficalClockFrequency;
         private ulong _ticks;
+        private byte[] operands = new byte[3];
 
         public CPU(GameBoyDevice device)
         {
@@ -26,34 +27,21 @@ namespace GameBoy.CpuArchitecture
             disassembler = new Disassembler(MemController);
         }
 
-        public void Step()
+        public int Step()
         {
-            int cycles;
+            int cycles = 0;
+
             try
             {
-                _nextInstruction = NextInstruction();
+                _nextInstruction = disassembler.ReadInstruction(ref Registers.PC);
                 cycles = _nextInstruction.Execute(this);
             }
             catch
             {
                 Console.WriteLine("Instruction not found!");
             }
-        }
 
-        public void Jump(ushort address)
-        {
-            Registers.PC = address;
-        }
-
-        public void Push(ushort value)
-        {
-            Registers.SP -= 2;
-            MemController.WriteUInt16(Registers.SP, value);
-        }
-
-        private Instruction NextInstruction()
-        {
-            return disassembler.ReadInstruction(ref Registers.PC);
+            return cycles;
         }
 
         public void PrintRegister()
@@ -66,7 +54,57 @@ namespace GameBoy.CpuArchitecture
             Console.WriteLine(Registers.ToBitString());
         }
 
+        public void JumpRelative(sbyte r8)
+        {
+            ushort jumpTo = unchecked((ushort)(Registers.PC + r8));
+            Jump(jumpTo);
+        }
+
+        public int JumpRelativeConditional(OpCode opCode, sbyte r8, bool conditionalCheck)
+        {
+            ushort jumpTo = unchecked((ushort)(Registers.PC + r8));
+            return JumpConditional(opCode, jumpTo, conditionalCheck);
+        }
+
+        public void Jump(ushort address)
+        {
+            Registers.PC = address;
+        }
+
+        /// <summary>
+        /// Jumps the PC to address (can provide optional flag checks)
+        /// </summary>
+        /// <param name="opCode"></param>
+        /// <param name="address"></param>
+        /// <param name="conditionalFlags">Optional parameter</param>
+        /// <returns>Clock cycles of the operation</returns>
+        public int JumpConditional(OpCode opCode, ushort address, bool conditionalCheck)
+        {
+            if (conditionalCheck)
+            {
+                Jump(address);
+                return opCode.ClockCycles;
+            }
+            else
+            {
+                return opCode.ClockCyclesAlt;
+            }
+        }
+
+        public void Push(ushort value)
+        {
+            Registers.SP -= 2;
+            MemController.Write(Registers.SP, value);
+        }
+
         public void Stop()
-        { }
+        { 
+            // TODO IMPLEMENT 
+        }
+
+        public void Halt() 
+        {
+            // TODO IMPLEMENT 
+        }
     }
 }

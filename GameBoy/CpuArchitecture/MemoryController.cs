@@ -1,5 +1,6 @@
 ﻿using System;
 using System.CodeDom;
+using System.Runtime.InteropServices;
 using GameBoy.CpuArchitecture;
 using GameBoy.Device;
 
@@ -19,7 +20,7 @@ namespace GameBoy.CpuArchitecture
             _device = device;
         }
 
-        public byte ReadByte(ushort address)
+        public byte Read(ushort address)
         {
             return _device.InternalMemory.ReadByte(address);
             //if (address < 0x8000)
@@ -58,7 +59,7 @@ namespace GameBoy.CpuArchitecture
             //else
             //    throw new MemoryAccessFailure(address);
         }
-        public byte[] ReadBytes(ushort address, int count)
+        public byte[] Read(ushort address, int count)
         {
             byte[] result;
             if (count == 1)
@@ -69,25 +70,25 @@ namespace GameBoy.CpuArchitecture
                 result = new byte[count];
 
             for (int i = 0; i < count; i++)
-                result[i] = ReadByte((ushort)(address + i));
+                result[i] = Read((ushort)(address + i));
 
             return result;
         }
 
-        public void WriteUInt16(ushort address, ushort value)
+        public void Write(ushort address, ushort value)
         {
-            WriteBytes(address, BitConverter.GetBytes(value));
+            Write(address, BitConverter.GetBytes(value));
         }
 
-        public void WriteBytes(ushort address, byte[] bytes)
+        public void Write(ushort address, byte[] bytes)
         {
             for (int i = 0; i < bytes.Length; i++)
             {
-                WriteByte((ushort) (address + i), bytes[i]);
+                Write((ushort) (address + i), bytes[i]);
             }
         }
 
-        public void WriteByte(ushort address, byte b)
+        public void Write(ushort address, byte b)
         {
             _device.InternalMemory.WriteByte(address, b);
         }

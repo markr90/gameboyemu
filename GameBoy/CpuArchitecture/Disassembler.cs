@@ -15,13 +15,13 @@ namespace GameBoy.CpuArchitecture
 
         public Instruction ReadInstruction(ref ushort location)
         {
-            byte code = _memController.ReadByte(location++);
+            byte code = _memController.Read(location++);
             Console.WriteLine("Trying to read code: {0:x2}", code);
             OpCode opCode = code == OpCodes.ExtendedTableOpCode
-                ? OpCodes.PrefixedOpCodes[_memController.ReadByte(location++)]
+                ? OpCodes.PrefixedOpCodes[_memController.Read(location++)]
                 : OpCodes.SingleByteOpCodes[code];
 
-            byte[] operands = _memController.ReadBytes(location, opCode.OperandLength);
+            byte[] operands = _memController.Read(location, opCode.OperandLength);
             location += (ushort) opCode.OperandLength;
 
             return new Instruction(opCode, operands);

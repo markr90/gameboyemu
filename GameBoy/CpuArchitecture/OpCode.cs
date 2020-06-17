@@ -5,38 +5,49 @@ using System;
 namespace GameBoy.CpuArchitecture
 {
     public delegate void Operation(CPU cpu, Instruction instruction);
+    public delegate int OperationAlt(CPU cpu, Instruction instruction);
     public class OpCode
     {
-        private readonly Operation Operation;
-        private readonly int ClockCycles;
+        private readonly OperationAlt Operation;
+        public readonly int ClockCycles;
+        public readonly int ClockCyclesAlt;
         public readonly int OperandLength;
         public readonly byte Code;
+        public readonly string Mnemonic;
 
-        public OpCode(byte code, int clockCycles, int operandLength, Operation operation)
+        public OpCode(byte code, string mnemonic, int clockCycles, int operandLength, Operation operation)
+            : this(code, mnemonic, clockCycles, clockCycles, operandLength, (cpu, i) => { operation(cpu, i); return clockCycles; })
+        {
+        }
+
+        public OpCode(byte code, string mnemonic, int clockCycles, int clockCyclesAlt, int operandLength, OperationAlt operation)
         {
             Code = code;
-            Operation = operation;
-            OperandLength = operandLength;
+            Mnemonic = mnemonic;
             ClockCycles = clockCycles;
+            ClockCyclesAlt = clockCyclesAlt;
+            OperandLength = operandLength;
+            Operation = operation;
         }
 
         public int Perform(CPU cpu, Instruction instruction)
         {
-            Operation(cpu, instruction);
-            return ClockCycles;
+            return Operation(cpu, instruction);
         }
 
         public override string ToString()
         {
-            return String.Format("{0:x2}", Code);
+            return string.Format("0x{0:x2}: {1}", Code, Mnemonic);
         }
     }
 
     public class PrefixedOpCode: OpCode
     {
         public const byte prefixCode = 0xCB;
-        public PrefixedOpCode(byte prefixedcode, int clockCycles, int operandLength, Operation operation)
-            : base(prefixedcode, clockCycles, operandLength, operation)
+        public PrefixedOpCode(byte prefixedCode, string mnemonic, int clockCycles, int operandLength, Operation operation)
+            : base(prefixedCode, mnemonic, clockCycles, operandLength, operation)
         { }
     }
+
+
 }
