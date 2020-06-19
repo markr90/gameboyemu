@@ -11,13 +11,15 @@ namespace GameBoy.CpuArchitecture
         public Registers Registers { get; }
         public MemoryController MemController { get; }
         public Alu Alu { get; }
-
         private Disassembler disassembler;
-        private Instruction _nextInstruction;
+        private Instruction _nextInstruction = new Instruction();
 
         public readonly double CyclesPerSecond = OfficalClockFrequency;
         private ulong _ticks;
-        private byte[] operands = new byte[3];
+        private byte[] operandBlock = new byte[4];
+
+        public ushort SP;
+        public ushort PC;
 
         public CPU(GameBoyDevice device)
         {
@@ -30,17 +32,8 @@ namespace GameBoy.CpuArchitecture
         public int Step()
         {
             int cycles = 0;
-
-            try
-            {
-                _nextInstruction = disassembler.ReadInstruction(ref Registers.PC);
-                cycles = _nextInstruction.Execute(this);
-            }
-            catch
-            {
-                Console.WriteLine("Instruction not found!");
-            }
-
+            disassembler.FetchInstruction(ref PC, ref _nextInstruction);
+            cycles = _nextInstruction.Execute(this);
             return cycles;
         }
 
@@ -56,19 +49,19 @@ namespace GameBoy.CpuArchitecture
 
         public void JumpRelative(sbyte r8)
         {
-            ushort jumpTo = unchecked((ushort)(Registers.PC + r8));
+            ushort jumpTo = unchecked((ushort)(PC + r8));
             Jump(jumpTo);
         }
 
         public int JumpRelativeConditional(OpCode opCode, sbyte r8, bool conditionalCheck)
         {
-            ushort jumpTo = unchecked((ushort)(Registers.PC + r8));
+            ushort jumpTo = unchecked((ushort)(PC + r8));
             return JumpConditional(opCode, jumpTo, conditionalCheck);
         }
 
         public void Jump(ushort address)
         {
-            Registers.PC = address;
+            PC = address;
         }
 
         /// <summary>
@@ -93,8 +86,9 @@ namespace GameBoy.CpuArchitecture
 
         public void Push(ushort value)
         {
-            Registers.SP -= 2;
-            MemController.Write(Registers.SP, value);
+            // TODO is this correct? Should this not be SP += 2??
+            SP -= 2;
+            MemController.Write(SP, value);
         }
 
         public void Stop()

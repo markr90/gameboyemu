@@ -11,16 +11,16 @@ namespace GameBoy.CpuArchitecture
         private readonly OperationAlt Operation;
         public readonly int ClockCycles;
         public readonly int ClockCyclesAlt;
-        public readonly int OperandLength;
+        public readonly ushort OperandLength;
         public readonly byte Code;
         public readonly string Mnemonic;
 
-        public OpCode(byte code, string mnemonic, int clockCycles, int operandLength, Operation operation)
+        public OpCode(byte code, string mnemonic, int clockCycles, ushort operandLength, Operation operation)
             : this(code, mnemonic, clockCycles, clockCycles, operandLength, (cpu, i) => { operation(cpu, i); return clockCycles; })
         {
         }
 
-        public OpCode(byte code, string mnemonic, int clockCycles, int clockCyclesAlt, int operandLength, OperationAlt operation)
+        public OpCode(byte code, string mnemonic, int clockCycles, int clockCyclesAlt, ushort operandLength, OperationAlt operation)
         {
             Code = code;
             Mnemonic = mnemonic;
@@ -44,7 +44,7 @@ namespace GameBoy.CpuArchitecture
     public class PrefixedOpCode: OpCode
     {
         public const byte prefixCode = 0xCB;
-        public PrefixedOpCode(byte prefixedCode, string mnemonic, int clockCycles, int operandLength, Operation operation)
+        public PrefixedOpCode(byte prefixedCode, string mnemonic, int clockCycles, ushort operandLength, Operation operation)
             : base(prefixedCode, mnemonic, clockCycles, operandLength, operation)
         { }
     }

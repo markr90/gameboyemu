@@ -23,6 +23,8 @@ namespace GameBoy.CpuArchitecture
         public byte Read(ushort address)
         {
             return _device.InternalMemory.ReadByte(address);
+            // TODO should be a switch statement for performance
+
             //if (address < 0x8000)
             //    // Should read from cartridge
             //    throw new NotImplementedException("Cartridge not implemented yet");
@@ -62,12 +64,19 @@ namespace GameBoy.CpuArchitecture
         public byte[] Read(ushort address, int count)
         {
             byte[] result;
-            if (count == 1)
-                result = _singleBuffer;
-            else if (count == 2)
-                result = _doubleBuffer;
-            else
-                result = new byte[count];
+
+            switch (count)
+            {
+                case 1:
+                    result = _singleBuffer;
+                    break;
+                case 2:
+                    result = _doubleBuffer;
+                    break;
+                default:
+                    result = new byte[count];
+                    break;
+            }
 
             for (int i = 0; i < count; i++)
                 result[i] = Read((ushort)(address + i));

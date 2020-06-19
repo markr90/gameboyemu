@@ -8,23 +8,33 @@ namespace GameBoy.CpuArchitecture
     {
         public delegate Instruction InstructionCreator(CPU cpu);
         private readonly MemoryController _memController;
+        private byte[] operandBuffer = new byte[2];
+
+
         public Disassembler(MemoryController memController)
         {
             _memController = memController;
         }
 
-        public Instruction ReadInstruction(ref ushort location)
+        private void ReadOperandBuffer(ushort location)
+        {
+            operandBuffer[0] = _memController.Read(location++);
+            operandBuffer[1] = _memController.Read(location++);
+        }
+
+        public void FetchInstruction(ref ushort location, ref Instruction instr)
         {
             byte code = _memController.Read(location++);
             Console.WriteLine("Trying to read code: {0:x2}", code);
-            OpCode opCode = code == OpCodes.ExtendedTableOpCode
-                ? OpCodes.PrefixedOpCodes[_memController.Read(location++)]
+
+            OpCode opcode = code == OpCodes.ExtendedTableOpCode
+                ? OpCodes.PrefixedOpCodes[location++]
                 : OpCodes.SingleByteOpCodes[code];
 
-            byte[] operands = _memController.Read(location, opCode.OperandLength);
-            location += (ushort) opCode.OperandLength;
+            ReadOperandBuffer(location);
 
-            return new Instruction(opCode, operands);
+            instr.Set(opcode, operandBuffer[0], operandBuffer[2]);
+            location += opcode.OperandLength;
         }
     }
 }

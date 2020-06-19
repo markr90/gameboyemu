@@ -24,9 +24,6 @@ namespace GameBoy.CpuArchitecture
         [FieldOffset(7)] public byte H;
         [FieldOffset(6)] public ushort HL;
 
-        [FieldOffset(8)] public ushort SP;
-        [FieldOffset(10)] public ushort PC;
-
         public void Reset()
         {
             A = B = C = D = E = F = H = L = 0;
@@ -53,9 +50,7 @@ namespace GameBoy.CpuArchitecture
                                  "BC: {1:X4}\r\n" +
                                  "DE: {2:X4}\r\n" +
                                  "HL: {3:X4}\r\n" +
-                                 "PC: {4:X4}\r\n" +
-                                 "SP: {5:X4}\r\n",
-                                 AF, BC, DE, HL, PC, SP);
+                                 AF, BC, DE, HL);
         }
 
         private string AsBitString(byte b)
@@ -76,9 +71,7 @@ namespace GameBoy.CpuArchitecture
                 "BC: {2} {3}\r\n" +
                 "DE: {4} {5}\r\n" +
                 "HL: {6} {7}\r\n" +
-                "PC: {8}\r\n" +
-                "SP: {9}",
-                AsBitString(A), AsBitString(F), AsBitString(B), AsBitString(C), AsBitString(D), AsBitString(E), AsBitString(H), AsBitString(L), AsBitString(PC), AsBitString(SP)
+                AsBitString(A), AsBitString(F), AsBitString(B), AsBitString(C), AsBitString(D), AsBitString(E), AsBitString(H), AsBitString(L)
             );
         }
     }
