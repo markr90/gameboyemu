@@ -57,7 +57,10 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AluTests\AluAddTests.cs" />
+    <Compile Include="AluTests\AddTests.cs" />
+    <Compile Include="AluTests\DecTests.cs" />
+    <Compile Include="AluTests\IncTests.cs" />
+    <Compile Include="AluTests\SubTests.cs" />
     <Compile Include="OpCodeListTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RegistersTests.cs" />

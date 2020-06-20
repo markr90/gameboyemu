@@ -2,14 +2,14 @@
 using GameBoy.CpuArchitecture;
 using Xunit;
 
-namespace GameBoyTests
+namespace GameBoyTests.AluTests
 {
-    public class AluAddTests
+    public class AddTests
     {
         private Registers registers;
         private Alu alu;
 
-        public AluAddTests()
+        public AddTests()
         {
             registers = new Registers();
             alu = new Alu(registers);
@@ -96,6 +96,86 @@ namespace GameBoyTests
             registers.SetFlags(RegisterFlags.N);
             alu.Add((ushort) 1, (ushort) 1);
             Assert.False(registers.AreFlagsSet(RegisterFlags.N));
+        }
+
+        // ushort + sbyte tests
+
+        [Fact(DisplayName = "When 255 + 1 C flag is set")]
+        public void SbyteCarryFlagTest()
+        {
+            registers.Reset();
+            alu.Add((ushort)255, (sbyte)1);
+            Assert.True(registers.AreFlagsSet(RegisterFlags.C));
+        }
+
+        [Fact(DisplayName = "When 15 + 1 expect H flag set")]
+        public void SbyteHalfCarryFlagTest()
+        {
+            registers.Reset();
+            alu.Add((ushort)15, (sbyte)1);
+            Assert.True(registers.AreFlagsSet(RegisterFlags.H));
+        }
+
+        [Fact]
+        public void When_SbyteAddCalled_ExpectNcleared()
+        {
+            registers.Reset();
+            registers.SetFlags(RegisterFlags.N);
+            alu.Add((ushort)1, (sbyte)1);
+            Assert.False(registers.AreFlagsSet(RegisterFlags.N));
+        }
+        [Fact]
+        public void When_SbyteAddCalled_ExpectZcleared()
+        {
+            registers.Reset();
+            registers.SetFlags(RegisterFlags.Z);
+            alu.Add((ushort)1, (sbyte)1);
+            Assert.False(registers.AreFlagsSet(RegisterFlags.Z));
+        }
+
+        // ADC tests
+        [Fact]
+        public void When_CisCleared_Expect10plus10is20()
+        {
+            registers.Reset();
+            var result = alu.Adc(10, 10);
+            Assert.Equal(20, result);
+        }
+        [Fact]
+        public void When_CisSetExpect10plus10is21()
+        {
+            registers.Reset();
+            registers.SetFlags(RegisterFlags.C);
+            var result = alu.Adc(10, 10);
+            Assert.Equal(21, result);
+        }
+
+        [Fact]
+        public void When_ADC_expectNcleared()
+        {
+            registers.Reset();
+            registers.SetFlags(RegisterFlags.N);
+            alu.Adc(10, 10);
+            Assert.False(registers.AreFlagsSet(RegisterFlags.N));
+        }
+
+        [Fact(DisplayName = "When C is set 14 + 1 (+1) should set half carry flag")]
+        public void When_CisSet_HalfCarryFlagSetFor14plus1()
+        {
+            registers.Reset();
+            registers.SetFlags(RegisterFlags.C);
+            alu.Adc(14, 1);
+            Assert.True(registers.AreFlagsSet(RegisterFlags.H));
+        }
+
+        [Fact(DisplayName = "When C is set 254 + 1 (+1) should set zero and carry flag")]
+        public void When_CisSet_ZeroFlagSetFor254plus1()
+        {
+            registers.Reset();
+            registers.SetFlags(RegisterFlags.C);
+            alu.Adc(254, 1);
+            Assert.True(registers.AreFlagsSet(RegisterFlags.Z));
+            Assert.True(registers.AreFlagsSet(RegisterFlags.C));
         }
     }
 }

@@ -29,6 +29,7 @@ namespace GameBoy.CpuArchitecture
             if ((carryBits & 0x10000) == 0x10000)
                 flags |= C;
 
+            // for ushort + ushort half carry is checked for upper byte
             if ((carryBits & 0x1000) == 0x1000)
                 flags |= H;
 
