@@ -44,6 +44,11 @@ namespace GameBoy.CpuArchitecture
             F |= (byte)flags;
         }
 
+        public void InvertFlags(RegisterFlags flags)
+        {
+            F ^= (byte)flags;
+        }
+
         public bool AreFlagsSet(RegisterFlags flags)
         {
             if (flags == RegisterFlags.None)

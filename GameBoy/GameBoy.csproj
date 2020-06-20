@@ -56,7 +56,7 @@
     <Compile Include="CpuArchitecture\MemoryController.cs" />
     <Compile Include="Device\Device.cs" />
     <Compile Include="Device\IMemoryBus.cs" />
-    <Compile Include="GameBoy.cs" />
+    <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

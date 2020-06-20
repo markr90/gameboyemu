@@ -1,4 +1,5 @@
 ﻿using GameBoy.CpuArchitecture;
+using System.Runtime.InteropServices;
 using Xunit;
 using static GameBoy.CpuArchitecture.RegisterFlags;
 
@@ -200,6 +201,42 @@ namespace GameBoyTests
             registers.Reset();
             registers.F = 0b01110000;
             Assert.False(registers.AreFlagsSet(Z | H));
+        }
+
+        [Fact(DisplayName = "When C is 1 invert flag sets C to 0")]
+        public void CinversionTest()
+        {
+            registers.Reset();
+            registers.F = 0b00010000;
+            registers.InvertFlags(C);
+            Assert.Equal(0b00000000, registers.F);
+        }
+
+        [Fact(DisplayName = "When Z and N are 1 invert Z | N sets Z and N to 0")]
+        public void ZHinversionTest()
+        {
+            registers.Reset();
+            registers.F = 0b11000000;
+            registers.InvertFlags(Z | N);
+            Assert.Equal(0b00000000, registers.F);
+        }
+
+        [Fact(DisplayName = "Inverting None leaves flags unchanged")]
+        public void NoneInversionTest()
+        {
+            registers.Reset();
+            registers.F = 0b11000000;
+            registers.InvertFlags(None);
+            Assert.Equal(0b11000000, registers.F);
+        }
+
+        [Fact(DisplayName = "Inverting all complements F")]
+        public void AllInversionTest()
+        {
+            registers.Reset();
+            registers.F = 0b10100000;
+            registers.InvertFlags(All);
+            Assert.Equal(0b01010000, registers.F);
         }
     }
 }

@@ -59,7 +59,7 @@ namespace GameBoy.CpuArchitecture
             new OpCode(0x2C, "INC L",       4,  0, (cpu, i) => cpu.Registers.L = cpu.Alu.Inc(cpu.Registers.L)),
             new OpCode(0x2D, "DEC L",       4,  0, (cpu, i) => cpu.Registers.L = cpu.Alu.Dec(cpu.Registers.L)),
             new OpCode(0x2E, "LD L d8",     8,  1, (cpu, i) => cpu.Registers.L = i.Operand8),
-            // TODO 0x2F CPL
+            new OpCode(0x2F, "CPL",         4,  0, (cpu, i) => cpu.Registers.A = cpu.Alu.Cpl(cpu.Registers.A)),
 
             // 0x30 - 0x3F
             new OpCode(0x30, "JR NC r8",    12, 8, 1, (cpu, i) => cpu.JumpRelativeConditional(i.OpCode, (sbyte) i.Operand8, !cpu.Registers.AreFlagsSet(RegisterFlags.C))),
@@ -69,7 +69,7 @@ namespace GameBoy.CpuArchitecture
             new OpCode(0x34, "INC (HL)",    12, 0, (cpu, i) => cpu.MemController.Write(cpu.Registers.HL, cpu.Alu.Inc(cpu.MemController.Read(cpu.Registers.HL)))),
             new OpCode(0x35, "DEC (HL)",    12, 0, (cpu, i) => cpu.MemController.Write(cpu.Registers.HL, cpu.Alu.Dec(cpu.MemController.Read(cpu.Registers.HL)))),
             new OpCode(0x36, "LD (HL) d8",  12, 1, (cpu, i) => cpu.MemController.Write(cpu.Registers.HL, i.Operand8)),
-            // TODO 0x37 SCF
+            new OpCode(0x37, "SCF",         4,  0, (cpu, i) => cpu.Alu.Scf()),
             new OpCode(0x38, "JR C r8",     12, 8, 1, (cpu, i) => cpu.JumpRelativeConditional(i.OpCode, (sbyte) i.Operand8, cpu.Registers.AreFlagsSet(RegisterFlags.C))),
             new OpCode(0x39, "ADD HL SP",   8,  0, (cpu, i) => cpu.Registers.HL = cpu.Alu.Add(cpu.Registers.HL, cpu.SP)),
             new OpCode(0x3A, "LD A (HL-)",  8,  0, (cpu, i) => { cpu.Registers.A = cpu.MemController.Read(cpu.Registers.HL); cpu.Registers.HL = cpu.Alu.Dec(cpu.Registers.HL); }),
@@ -77,7 +77,7 @@ namespace GameBoy.CpuArchitecture
             new OpCode(0x3C, "INC A",       4,  0, (cpu, i) => cpu.Registers.A = cpu.Alu.Inc(cpu.Registers.A)),
             new OpCode(0x3D, "DEC A",       4,  0, (cpu, i) => cpu.Registers.A = cpu.Alu.Dec(cpu.Registers.A)),
             new OpCode(0x3E, "LD A d8",     8,  1, (cpu, i) => cpu.Registers.A = i.Operand8),
-            // TODO 0x3F CCF
+            new OpCode(0x3F, "CCF",         4,  0, (cpu, i) => cpu.Alu.Ccf()),
 
             // 0x40 - 0x4F
             new OpCode(0x40, "LD B B",      4,  0, (cpu, i) => cpu.Registers.B = cpu.Registers.B),

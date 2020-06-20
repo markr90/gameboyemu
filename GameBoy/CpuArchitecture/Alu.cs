@@ -248,6 +248,24 @@ namespace GameBoy.CpuArchitecture
             return result;
         }
 
+        public byte Cpl(byte value)
+        {
+            _registers.SetFlags(N | H);
+            return (byte)~(value);
+        }
+
+        public void Scf()
+        {
+            _registers.SetFlags(C);
+            _registers.ClearFlags(N | H);
+        }
+
+        public void Ccf()
+        {
+            _registers.InvertFlags(C);
+            _registers.ClearFlags(N | H);
+        }
+
         public void Daa()
         {
 
