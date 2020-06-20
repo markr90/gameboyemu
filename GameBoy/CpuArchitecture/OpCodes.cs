@@ -1,4 +1,7 @@
 ﻿
+using System;
+using System.Security.Policy;
+
 namespace GameBoy.CpuArchitecture
 {
     public static class OpCodes
@@ -7,6 +10,8 @@ namespace GameBoy.CpuArchitecture
 
         public static readonly OpCode[] SingleByteOpCodes =
         {
+            // TODO might need unchecked environments, but I dont think this is needed?
+
             // 0x00 - 0x0F
             new OpCode(0x00, "NOP",         4,  0, (cpu, i) => { }),
             new OpCode(0x01, "LD BC d16" ,  12, 2, (cpu, i) => cpu.Registers.BC = i.Operand16 ),
@@ -34,7 +39,7 @@ namespace GameBoy.CpuArchitecture
             new OpCode(0x15, "DEC D",       4,  0, (cpu, i) => cpu.Registers.D = cpu.Alu.Dec(cpu.Registers.D)),
             new OpCode(0x16, "LD D d8",     8,  1, (cpu, i) => cpu.Registers.D = i.Operand8),
             new OpCode(0x17, "RLA",         4,  0, (cpu, i) => cpu.Registers.A = cpu.Alu.Rla()),
-            new OpCode(0x18, "JR d8",       12, 1, (cpu, i) => cpu.JumpRelative((sbyte) i.Operand8)),
+            new OpCode(0x18, "JR d8",       12, 1, (cpu, i) => cpu.JumpRelative(((sbyte) i.Operand8))),
             new OpCode(0x19, "ADD HL DE",   8,  0, (cpu, i) => cpu.Registers.HL = cpu.Alu.Add(cpu.Registers.HL, cpu.Registers.DE)),
             new OpCode(0x1A, "LD A (DE)",   8,  0, (cpu, i) => cpu.Registers.A = cpu.MemController.Read(cpu.Registers.DE)),
             new OpCode(0x1B, "DEC DE",      8,  0, (cpu, i) => cpu.Registers.DE = cpu.Alu.Dec(cpu.Registers.DE)),
@@ -51,7 +56,7 @@ namespace GameBoy.CpuArchitecture
             new OpCode(0x24, "INC H",       4,  0, (cpu, i) => cpu.Registers.H = cpu.Alu.Inc(cpu.Registers.H)),
             new OpCode(0x25, "DEC H",       4,  0, (cpu, i) => cpu.Registers.H = cpu.Alu.Dec(cpu.Registers.H)),
             new OpCode(0x26, "LD H d8",     8,  1, (cpu, i) => cpu.Registers.H = i.Operand8),
-            // TODO 0x27 DAA
+            new OpCode(0x27, "DAA",         4,  0, (cpu, i) => cpu.Alu.Daa()),
             new OpCode(0x28, "JR Z r8",     12, 8, 1, (cpu, i) => cpu.JumpRelativeConditional(i.OpCode, (sbyte) i.Operand8, cpu.Registers.AreFlagsSet(RegisterFlags.Z))),
             new OpCode(0x29, "ADD HL HL",   8,  0, (cpu, i) => cpu.Registers.HL = cpu.Alu.Add(cpu.Registers.HL, cpu.Registers.HL)),
             new OpCode(0x2A, "LD A (HL+)",  8,  0, (cpu, i) => { cpu.Registers.A = cpu.MemController.Read(cpu.Registers.HL); cpu.Registers.HL = cpu.Alu.Inc(cpu.Registers.HL); }),
@@ -169,7 +174,7 @@ namespace GameBoy.CpuArchitecture
             new OpCode(0x8E, "ADC (HL)",    8,  0, (cpu, i) => cpu.Registers.A = cpu.Alu.Adc(cpu.Registers.A, cpu.MemController.Read(cpu.Registers.HL))),
             new OpCode(0x8F, "ADC A",       4,  0, (cpu, i) => cpu.Registers.A = cpu.Alu.Adc(cpu.Registers.A, cpu.Registers.A)),
 
-            // 0x90 .. 0x9F
+            // 0x90 - 0x9F
             new OpCode(0x90, "SUB B",       4,  0, (cpu, i) => cpu.Registers.A = cpu.Alu.Sub(cpu.Registers.A, cpu.Registers.B)),
             new OpCode(0x91, "SUB C",       4,  0, (cpu, i) => cpu.Registers.A = cpu.Alu.Sub(cpu.Registers.A, cpu.Registers.C)),
             new OpCode(0x92, "SUB D",       4,  0, (cpu, i) => cpu.Registers.A = cpu.Alu.Sub(cpu.Registers.A, cpu.Registers.D)),
@@ -187,7 +192,113 @@ namespace GameBoy.CpuArchitecture
             new OpCode(0x9E, "SBC (HL)",    8,  0, (cpu, i) => cpu.Registers.A = cpu.Alu.Sbc(cpu.Registers.A, cpu.MemController.Read(cpu.Registers.HL))),
             new OpCode(0x9F, "SBC A",       4,  0, (cpu, i) => cpu.Registers.A = cpu.Alu.Sbc(cpu.Registers.A, cpu.Registers.A)),
 
+            // 0xA0 - 0xAF
+            new OpCode(0xA0, "AND B",       4,  0, (cpu, i) => cpu.Registers.A = cpu.Alu.And(cpu.Registers.A, cpu.Registers.B)),
+            new OpCode(0xA1, "AND C",       4,  0, (cpu, i) => cpu.Registers.A = cpu.Alu.And(cpu.Registers.A, cpu.Registers.C)),
+            new OpCode(0xA2, "AND D",       4,  0, (cpu, i) => cpu.Registers.A = cpu.Alu.And(cpu.Registers.A, cpu.Registers.D)),
+            new OpCode(0xA3, "AND E",       4,  0, (cpu, i) => cpu.Registers.A = cpu.Alu.And(cpu.Registers.A, cpu.Registers.E)),
+            new OpCode(0xA4, "AND H",       4,  0, (cpu, i) => cpu.Registers.A = cpu.Alu.And(cpu.Registers.A, cpu.Registers.H)),
+            new OpCode(0xA5, "AND L",       4,  0, (cpu, i) => cpu.Registers.A = cpu.Alu.And(cpu.Registers.A, cpu.Registers.L)),
+            new OpCode(0xA6, "AND (HL)",    8,  0, (cpu, i) => cpu.Registers.A = cpu.Alu.And(cpu.Registers.A, cpu.MemController.Read(cpu.Registers.HL))),
+            new OpCode(0xA7, "AND A",       4,  0, (cpu, i) => cpu.Registers.A = cpu.Alu.And(cpu.Registers.A, cpu.Registers.A)),
+            new OpCode(0xA8, "XOR B",       4,  0, (cpu, i) => cpu.Registers.A = cpu.Alu.Xor(cpu.Registers.A, cpu.Registers.B)),
+            new OpCode(0xA9, "XOR C",       4,  0, (cpu, i) => cpu.Registers.A = cpu.Alu.Xor(cpu.Registers.A, cpu.Registers.C)),
+            new OpCode(0xAA, "XOR D",       4,  0, (cpu, i) => cpu.Registers.A = cpu.Alu.Xor(cpu.Registers.A, cpu.Registers.D)),
+            new OpCode(0xAB, "XOR E",       4,  0, (cpu, i) => cpu.Registers.A = cpu.Alu.Xor(cpu.Registers.A, cpu.Registers.E)),
+            new OpCode(0xAC, "XOR H",       4,  0, (cpu, i) => cpu.Registers.A = cpu.Alu.Xor(cpu.Registers.A, cpu.Registers.H)),
+            new OpCode(0xAD, "XOR L",       4,  0, (cpu, i) => cpu.Registers.A = cpu.Alu.Xor(cpu.Registers.A, cpu.Registers.L)),
+            new OpCode(0xAE, "XOR (HL)",    8,  0, (cpu, i) => cpu.Registers.A = cpu.Alu.Xor(cpu.Registers.A, cpu.MemController.Read(cpu.Registers.HL))),
+            new OpCode(0xAF, "XOR A",       4,  0, (cpu, i) => cpu.Registers.A = cpu.Alu.Xor(cpu.Registers.A, cpu.Registers.A)),
 
+            // 0xB0 - 0xBF
+            new OpCode(0xB0, "OR B",        4,  0, (cpu, i) => cpu.Registers.A = cpu.Alu.Or(cpu.Registers.A, cpu.Registers.B)),
+            new OpCode(0xB1, "OR C",        4,  0, (cpu, i) => cpu.Registers.A = cpu.Alu.Or(cpu.Registers.A, cpu.Registers.C)),
+            new OpCode(0xB2, "OR D",        4,  0, (cpu, i) => cpu.Registers.A = cpu.Alu.Or(cpu.Registers.A, cpu.Registers.D)),
+            new OpCode(0xB3, "OR E",        4,  0, (cpu, i) => cpu.Registers.A = cpu.Alu.Or(cpu.Registers.A, cpu.Registers.E)),
+            new OpCode(0xB4, "OR H",        4,  0, (cpu, i) => cpu.Registers.A = cpu.Alu.Or(cpu.Registers.A, cpu.Registers.H)),
+            new OpCode(0xB5, "OR L",        4,  0, (cpu, i) => cpu.Registers.A = cpu.Alu.Or(cpu.Registers.A, cpu.Registers.L)),
+            new OpCode(0xB6, "OR (HL)",     8,  0, (cpu, i) => cpu.Registers.A = cpu.Alu.Or(cpu.Registers.A, cpu.MemController.Read(cpu.Registers.HL))),
+            new OpCode(0xB7, "OR A",        4,  0, (cpu, i) => cpu.Registers.A = cpu.Alu.Or(cpu.Registers.A, cpu.Registers.A)),
+            new OpCode(0xB8, "CP B",        4,  0, (cpu, i) => cpu.Alu.Cp(cpu.Registers.A, cpu.Registers.B)),
+            new OpCode(0xB9, "CP C",        4,  0, (cpu, i) => cpu.Alu.Cp(cpu.Registers.A, cpu.Registers.C)),
+            new OpCode(0xBA, "CP D",        4,  0, (cpu, i) => cpu.Alu.Cp(cpu.Registers.A, cpu.Registers.D)),
+            new OpCode(0xBB, "CP E",        4,  0, (cpu, i) => cpu.Alu.Cp(cpu.Registers.A, cpu.Registers.E)),
+            new OpCode(0xBC, "CP H",        4,  0, (cpu, i) => cpu.Alu.Cp(cpu.Registers.A, cpu.Registers.H)),
+            new OpCode(0xBD, "CP L",        4,  0, (cpu, i) => cpu.Alu.Cp(cpu.Registers.A, cpu.Registers.L)),
+            new OpCode(0xBE, "CP (HL)",     8,  0, (cpu, i) => cpu.Alu.Cp(cpu.Registers.A, cpu.MemController.Read(cpu.Registers.HL))),
+            new OpCode(0xBF, "CP A",        4,  0, (cpu, i) => cpu.Alu.Cp(cpu.Registers.A, cpu.Registers.A)),
+
+            // 0xC0 - 0xCF
+            new OpCode(0xC0, "RET NZ",      20, 8, 0, (cpu, i) => cpu.RetConditional(i.OpCode, !cpu.Registers.AreFlagsSet(RegisterFlags.Z))),
+            new OpCode(0xC1, "POP BC",      12, 0, (cpu, i) => cpu.Registers.BC = cpu.Pop()),
+            new OpCode(0xC2, "JP NZ d16",   16, 12, 2, (cpu, i) => cpu.JumpConditional(i.OpCode, i.Operand16, !cpu.Registers.AreFlagsSet(RegisterFlags.Z))),
+            new OpCode(0xC3, "JP d16",      16, 3, (cpu, i) => cpu.Jump(i.Operand16)),
+            new OpCode(0xC4, "CALL NZ d16", 24, 12, 2, (cpu, i) => cpu.CallConditional(i.OpCode, i.Operand16, !cpu.Registers.AreFlagsSet(RegisterFlags.Z))),
+            new OpCode(0xC5, "PUSH BC",     16, 0, (cpu, i) => cpu.Push(cpu.Registers.BC)),
+            new OpCode(0xC6, "ADD A d8",    8,  1, (cpu, i) => cpu.Registers.A = cpu.Alu.Add(cpu.Registers.A, i.Operand8)),
+            new OpCode(0xC7, "RST 0x08",    16, 0, (cpu, i) => cpu.Call(0x00)),
+            new OpCode(0xC8, "RET Z",       20, 8, 0, (cpu, i) => cpu.RetConditional(i.OpCode, cpu.Registers.AreFlagsSet(RegisterFlags.Z))),
+            new OpCode(0xC9, "RET",         16, 0, (cpu, i) => cpu.Ret()),
+            new OpCode(0xCA, "JP Z d16",    16, 12, 2, (cpu, i) => cpu.JumpConditional(i.OpCode, i.Operand16, cpu.Registers.AreFlagsSet(RegisterFlags.Z))),
+            new OpCode(0xCB, "PREFIX CB",   0,  0, (cpu, i) => throw new InvalidOperationException("PREFIX_ERROR: should have been redirected to prefix table")), // should never retrieve this opcode
+            new OpCode(0xCC, "CALL Z d16",  24, 12, 2, (cpu, i) => cpu.CallConditional(i.OpCode, i.Operand16, cpu.Registers.AreFlagsSet(RegisterFlags.Z))),
+            new OpCode(0xCD, "CALL d16",    24, 2, (cpu, i) => cpu.Call(i.Operand16)),
+            new OpCode(0xCE, "ADC A d8",    8,  1, (cpu, i) => cpu.Registers.A = cpu.Alu.Adc(cpu.Registers.A, i.Operand8)),
+            new OpCode(0xCF, "RST 0x08",    16, 0, (cpu, i) => cpu.Call(0x08)),
+
+            // 0xD0 - 0xDF
+            new OpCode(0xD0, "RET NC",      20, 8, 0, (cpu, i) => cpu.RetConditional(i.OpCode, !cpu.Registers.AreFlagsSet(RegisterFlags.C))),
+            new OpCode(0xD1, "POP DE",      12, 0, (cpu, i) => cpu.Registers.DE = cpu.Pop()),
+            new OpCode(0xD2, "JP NZ d16",   16, 12, 2, (cpu, i) => cpu.JumpConditional(i.OpCode, i.Operand16, !cpu.Registers.AreFlagsSet(RegisterFlags.C))),
+            new InvalidOpCode(0xD3),
+            new OpCode(0xD4, "CALL NC d16", 24, 12, 2, (cpu, i) => cpu.CallConditional(i.OpCode, i.Operand16, !cpu.Registers.AreFlagsSet(RegisterFlags.C))),
+            new OpCode(0xD5, "PUSH DE",     16, 0, (cpu, i) => cpu.Push(cpu.Registers.DE)),
+            new OpCode(0xD6, "SUB A d8",    8,  1, (cpu, i) => cpu.Registers.A = cpu.Alu.Sub(cpu.Registers.A, i.Operand8)),
+            new OpCode(0xD7, "RST 0x10",    16, 0, (cpu, i) => cpu.Call(0x10)),
+            new OpCode(0xD8, "RET C",       20, 8, 0, (cpu, i) => cpu.RetConditional(i.OpCode, cpu.Registers.AreFlagsSet(RegisterFlags.C))),
+            new OpCode(0xD9, "RETI",        16, 0, (cpu, i) => {cpu.Ret(); cpu.EnableInterrupts(); }), 
+            new OpCode(0xDA, "JP C d16",    16, 12, 2, (cpu, i) => cpu.JumpConditional(i.OpCode, i.Operand16, cpu.Registers.AreFlagsSet(RegisterFlags.C))),
+            new InvalidOpCode(0xDB),
+            new OpCode(0xDC, "CALL C d16",  24, 12, 2, (cpu, i) => cpu.CallConditional(i.OpCode, i.Operand16, cpu.Registers.AreFlagsSet(RegisterFlags.C))),
+            new InvalidOpCode(0xDD),
+            new OpCode(0xDE, "SBC A d8",    8,  1, (cpu, i) => cpu.Registers.A = cpu.Alu.Sbc(cpu.Registers.A, i.Operand8)),
+            new OpCode(0xDF, "RST 0x18",    16, 0, (cpu, i) => cpu.Call(0x18)),
+
+            // 0xE0 - 0xEF
+            new OpCode(0xE0, "LDH (d8) A",  12, 1, (cpu, i) => cpu.MemController.Write((ushort) (0xFF00 + i.Operand8), cpu.Registers.A)),
+            new OpCode(0xE1, "POP HL",      12, 0, (cpu, i) => cpu.Registers.HL = cpu.Pop()),
+            new OpCode(0xE2, "LDH (C) A",   12, 0, (cpu, i) => cpu.MemController.Write((ushort) (0xFF00 + cpu.Registers.C), cpu.Registers.A)),
+            new InvalidOpCode(0xE3),
+            new InvalidOpCode(0xE4),
+            new OpCode(0xE5, "PUSH HL",     16, 0, (cpu, i) => cpu.Push(cpu.Registers.HL)),
+            new OpCode(0xE6, "AND A d8",    8,  1, (cpu, i) => cpu.Registers.A = cpu.Alu.And(cpu.Registers.A, i.Operand8)),
+            new OpCode(0xE7, "RST 0x20",    16, 0, (cpu, i) => cpu.Call(0x20)),
+            new OpCode(0xE8, "ADD SP r8",   16, 1, (cpu, i) => cpu.SP = cpu.Alu.Add(cpu.SP, (sbyte) i.Operand8)),
+            new OpCode(0xE9, "JP (HL)",     4,  0, (cpu, i) => cpu.Jump(cpu.MemController.Read(cpu.Registers.HL))),
+            new OpCode(0xEA, "LD (d16) A",  16, 2, (cpu, i) => cpu.MemController.Write(i.Operand16, cpu.Registers.A)),
+            new InvalidOpCode(0xEB),
+            new InvalidOpCode(0xEC),
+            new InvalidOpCode(0xED),
+            new OpCode(0xEE, "XOR A d8",    8,  1, (cpu, i) => cpu.Registers.A = cpu.Alu.Xor(cpu.Registers.A, i.Operand8)),
+            new OpCode(0xEF, "RST 0x28",    16, 0, (cpu, i) => cpu.Call(0x28)),
+
+            // 0xF0 - 0xFF
+            new OpCode(0xF0, "LDH A (d8)",  12, 1, (cpu, i) => cpu.Registers.A = cpu.MemController.Read((ushort) (0xFF00 + i.Operand8))),
+            new OpCode(0xF1, "POP AF",      12, 0, (cpu, i) => cpu.Registers.AF = cpu.Pop()),
+            new OpCode(0xF2, "LDH A (C)",   8,  0, (cpu, i) => cpu.Registers.A = cpu.MemController.Read((ushort) (0xFF00 + cpu.Registers.C))),
+            new OpCode(0xF3, "DI",          4,  0, (cpu, i) => cpu.DisableInterrupts()),
+            new InvalidOpCode(0xF4),
+            new OpCode(0xF5, "PUSH AF",     16, 0, (cpu, i) => cpu.Push(cpu.Registers.AF)),
+            new OpCode(0xF6, "OR d8",       8,  1, (cpu, i) => cpu.Registers.A = cpu.Alu.Or(cpu.Registers.A, i.Operand8)),
+            new OpCode(0xF7, "RST 0x30",    16, 0, (cpu, i) => cpu.Call(0x30)),
+            new OpCode(0xF8, "LD HL, SP+r8",12, 1, (cpu, i) => cpu.Registers.HL = cpu.Alu.Add(cpu.SP, (sbyte) i.Operand8)),
+            new OpCode(0xF9, "LD SP HL",    8,  0, (cpu, i) => cpu.SP = cpu.Registers.HL),
+            new OpCode(0xFA, "LD A (d16)",  16, 2, (cpu, i) => cpu.Registers.A = cpu.MemController.Read(i.Operand16)),
+            new OpCode(0xFB, "EI",          4,  0, (cpu, i) => cpu.EnableInterrupts()),
+            new InvalidOpCode(0xFC),
+            new InvalidOpCode(0xFD),
+            new OpCode(0xFE, "CP d8",       8,  1, (cpu, i) => cpu.Alu.Cp(cpu.Registers.A, i.Operand8)),
+            new OpCode(0xFF, "RST 0x38",    16, 0, (cpu, i) => cpu.Call(0x38))
         };
 
         public static readonly OpCode[] PrefixedOpCodes =

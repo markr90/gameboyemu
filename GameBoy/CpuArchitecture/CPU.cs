@@ -1,11 +1,17 @@
 ﻿using GameBoy.CpuArchitecture;
 using GameBoy.Device;
 using System;
+using System.Runtime.InteropServices;
 
 namespace GameBoy.CpuArchitecture
 {
     public class CPU
     {
+        // TODO implement halt mechanism
+        // TODO implement shutdown
+        // TODO implement stop
+
+
         private const double OfficalClockFrequency = 4194304;
 
         public Registers Registers { get; }
@@ -20,6 +26,10 @@ namespace GameBoy.CpuArchitecture
 
         public ushort SP;
         public ushort PC;
+
+        private InterruptFlags IE;
+        private InterruptFlags IF;
+        private bool IME;
 
         public CPU(GameBoyDevice device)
         {
@@ -64,13 +74,49 @@ namespace GameBoy.CpuArchitecture
             PC = address;
         }
 
-        /// <summary>
-        /// Jumps the PC to address (can provide optional flag checks)
-        /// </summary>
-        /// <param name="opCode"></param>
-        /// <param name="address"></param>
-        /// <param name="conditionalFlags">Optional parameter</param>
-        /// <returns>Clock cycles of the operation</returns>
+        public void Push(ushort value)
+        {
+            SP -= 2;
+            MemController.Write(SP, value);
+        }
+
+        public ushort Pop()
+        {
+            ushort result = MemController.ReadUshort(SP);
+            SP += 2;
+            return result;
+        }
+
+        public void Ret()
+        {
+            PC = Pop();
+        }
+
+        public int RetConditional(OpCode opcode, bool conditionalCheck)
+        {
+            if (conditionalCheck)
+            {
+                Ret();
+                return opcode.ClockCycles;
+            }
+            return opcode.ClockCyclesAlt;
+        }
+
+        public void Call(ushort address)
+        {
+            Push(PC);
+            PC = address;
+        }
+
+        public int CallConditional(OpCode opcode, ushort address, bool conditionalFlag)
+        {
+            if (conditionalFlag)
+            {
+                Call(address);
+                return opcode.ClockCycles;
+            }
+            return opcode.ClockCyclesAlt;
+        }
         public int JumpConditional(OpCode opCode, ushort address, bool conditionalCheck)
         {
             if (conditionalCheck)
@@ -84,21 +130,21 @@ namespace GameBoy.CpuArchitecture
             }
         }
 
-        public void Push(ushort value)
+        public void EnableInterrupts()
         {
-            // TODO is this correct? Should this not be SP += 2??
-            SP -= 2;
-            MemController.Write(SP, value);
+            IME = true;
+        }
+        public void DisableInterrupts()
+        {
+            IME = false;
         }
 
         public void Stop()
         { 
-            // TODO IMPLEMENT 
         }
 
         public void Halt() 
         {
-            // TODO IMPLEMENT 
         }
     }
 }

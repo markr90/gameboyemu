@@ -14,12 +14,27 @@ namespace GameBoy.CpuArchitecture
         public readonly ushort OperandLength;
         public readonly byte Code;
         public readonly string Mnemonic;
-
+        /// <summary>
+        /// Constructor for opcodes that only have on clockcycle count
+        /// </summary>
+        /// <param name="code"></param>
+        /// <param name="mnemonic"></param>
+        /// <param name="clockCycles"></param>
+        /// <param name="operandLength"></param>
+        /// <param name="operation"></param>
         public OpCode(byte code, string mnemonic, int clockCycles, ushort operandLength, Operation operation)
             : this(code, mnemonic, clockCycles, clockCycles, operandLength, (cpu, i) => { operation(cpu, i); return clockCycles; })
         {
         }
-
+        /// <summary>
+        /// Constructor for OpCodes that have an alternative clockcycle count. Operation must return clock cycle number
+        /// </summary>
+        /// <param name="code"></param>
+        /// <param name="mnemonic"></param>
+        /// <param name="clockCycles"></param>
+        /// <param name="clockCyclesAlt"></param>
+        /// <param name="operandLength"></param>
+        /// <param name="operation"></param>
         public OpCode(byte code, string mnemonic, int clockCycles, int clockCyclesAlt, ushort operandLength, OperationAlt operation)
         {
             Code = code;
@@ -47,6 +62,14 @@ namespace GameBoy.CpuArchitecture
         public PrefixedOpCode(byte prefixedCode, string mnemonic, int clockCycles, ushort operandLength, Operation operation)
             : base(prefixedCode, mnemonic, clockCycles, operandLength, operation)
         { }
+    }
+
+    public class InvalidOpCode: OpCode
+    {
+        public InvalidOpCode(byte code)
+            : base(code, "INVALID", 0, 0, (cpu, i) => throw new InvalidOperationException(string.Format("INVALID_OP: {0}", code)))
+        {
+        }
     }
 
 

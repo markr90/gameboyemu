@@ -84,6 +84,11 @@ namespace GameBoy.CpuArchitecture
             return result;
         }
 
+        public ushort ReadUshort(ushort address)
+        {
+            return BitConverter.ToUInt16(Read(address, 2), 0);
+        }
+
         public void Write(ushort address, ushort value)
         {
             Write(address, BitConverter.GetBytes(value));

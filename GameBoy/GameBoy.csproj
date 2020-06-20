@@ -50,7 +50,7 @@
     <Compile Include="CpuArchitecture\Disassembler.cs" />
     <Compile Include="CpuArchitecture\OpCode.cs" />
     <Compile Include="CpuArchitecture\OpCodes.cs" />
-    <Compile Include="CpuArchitecture\RegisterFlags.cs" />
+    <Compile Include="CpuArchitecture\FlagTypes.cs" />
     <Compile Include="CpuArchitecture\Registers.cs" />
     <Compile Include="Device\Memory.cs" />
     <Compile Include="CpuArchitecture\MemoryController.cs" />

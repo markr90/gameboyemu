@@ -20,7 +20,7 @@ namespace GameBoyTests
         public void When_ByteHalfOverFlow_Expect_HalfCarryFlagSet()
         {
             registers.Reset();
-            alu.Add(15, 1);
+            alu.Add((byte)15, (byte)1);
             Assert.True(registers.AreFlagsSet(RegisterFlags.H));
         }
 
@@ -28,7 +28,7 @@ namespace GameBoyTests
         public void When_ByteOverFlow_Expect_CarryFlagSet()
         {
             registers.Reset();
-            alu.Add(255, 1);
+            alu.Add((byte)255, (byte)1);
             Assert.True(registers.AreFlagsSet(RegisterFlags.C));
         }
 
@@ -36,7 +36,7 @@ namespace GameBoyTests
         public void When_ByteResultIsZero_Expect_ZeroAndCarryFlagSet()
         {
             registers.Reset();
-            var result = alu.Add(255, 1);
+            var result = alu.Add((byte)255, (byte)1);
             Assert.Equal(0, result);
             Assert.True(registers.AreFlagsSet(RegisterFlags.Z));
             Assert.True(registers.AreFlagsSet(RegisterFlags.C));
@@ -47,7 +47,7 @@ namespace GameBoyTests
         {
             registers.Reset();
             registers.SetFlags(RegisterFlags.N);
-            alu.Add(1, 1);
+            alu.Add((byte)1, (byte)1);
             Assert.False(registers.AreFlagsSet(RegisterFlags.N));
         }
 

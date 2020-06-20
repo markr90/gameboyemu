@@ -12,4 +12,15 @@ namespace GameBoy.CpuArchitecture
         C = 1 << 4,
         All = Z | N | H | C
     }
+
+    [Flags]
+    public enum InterruptFlags: byte
+    {
+        None = 0,
+        VBlank = (1 << 0),
+        LCDStat = (1 << 1),
+        Timer = (1 << 2),
+        Serial = (1 << 3),
+        Joypad = (1 << 4)
+    }
 }
