@@ -29,6 +29,11 @@ namespace GameBoy.CpuArchitecture
             A = B = C = D = E = F = H = L = 0;
         }
 
+        public void ResetFlags()
+        {
+            F = 0;
+        }
+
         public void ClearFlags(RegisterFlags flags)
         {
             F &= (byte) ~(byte)flags;
@@ -41,6 +46,10 @@ namespace GameBoy.CpuArchitecture
 
         public bool AreFlagsSet(RegisterFlags flags)
         {
+            if (flags == RegisterFlags.None)
+            {
+                return F == 0;
+            }
             return (F & (byte)flags) == (byte)flags;
         }
 
