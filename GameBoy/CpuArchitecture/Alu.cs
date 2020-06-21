@@ -109,6 +109,7 @@ namespace GameBoy.CpuArchitecture
 
         public ushort Add(ushort a, sbyte b)
         {
+            // affected flags 00hc
             _registers.ClearFlags(Z | N);
             return PerformMath(a, b, (x, y) => x + y, H | C);
         }
@@ -149,7 +150,7 @@ namespace GameBoy.CpuArchitecture
         public ushort Inc(ushort targetValue)
         {
             // affected flags ----
-            return PerformMath(targetValue, (ushort) 1, (x, y) => x + y, None);
+            return PerformMath(targetValue, (ushort)1, (x, y) => x + y, None);
         }
 
         /// <summary>
@@ -333,7 +334,7 @@ namespace GameBoy.CpuArchitecture
             // affected flags z010
             _registers.ClearFlags(Z | N | C);
             _registers.SetFlags(H);
-            byte result = (byte) (a & b);
+            byte result = (byte)(a & b);
             if (result == 0)
                 _registers.SetFlags(Z);
 
@@ -375,9 +376,9 @@ namespace GameBoy.CpuArchitecture
             // subtraction is similar, subtract 6 from digits only if carry flags set
             var result = value;
 
-            _registers.ClearFlags(Z | C);            
+            _registers.ClearFlags(Z | C);
 
-            if (!_registers.AreFlagsSet(N)) 
+            if (!_registers.AreFlagsSet(N))
             {
                 if (_registers.AreFlagsSet(C) || value > 0x99)
                 {
@@ -407,6 +408,82 @@ namespace GameBoy.CpuArchitecture
 
             _registers.ClearFlags(H);
             return result;
+        }
+
+        public byte Sla(byte value)
+        {
+            // affected flags z00c
+            _registers.ResetFlags();
+            if ((value & (1 << 7)) != 0)
+                _registers.SetFlags(C);
+
+            byte result = (byte)(value << 1);
+            if (result == 0)
+                _registers.SetFlags(Z);
+
+            return result;
+        }
+
+        public byte Sra(byte value)
+        {
+            // affected flags z00c
+            _registers.ResetFlags();
+            if ((value & (1 << 0)) != 0)
+                _registers.SetFlags(C);
+
+            byte result = (byte)((value >> 1) | (value & (1 << 7)));
+            if (result == 0)
+                _registers.SetFlags(Z);
+
+            return result;
+        }
+        public byte Srl(byte value)
+        {
+            // affected flags z00c
+            _registers.ResetFlags();
+            if ((value & (1 << 0)) != 0)
+                _registers.SetFlags(C);
+
+            byte result = (byte)(value >> 1);
+            if (result == 0)
+                _registers.SetFlags(Z);
+
+            return result;
+        }
+
+        public byte Swap(byte value)
+        {
+            // affected flags z000
+            _registers.ResetFlags();
+
+            byte result = (byte)(((value & 0x0F) << 4) | ((value & 0xF0) >> 4));
+
+            if (result == 0)
+                _registers.SetFlags(Z);
+
+            return result;
+        }
+
+        public void Bit(byte value, int n)
+        {
+            // affected flags z01-
+            _registers.SetFlags(H);
+            _registers.ClearFlags(Z | N);
+
+            if ((value & (1 << n)) == 0)
+                _registers.SetFlags(Z);
+        }
+
+        public byte Set(byte value, int n)
+        {
+            // affected flags ----
+            return (byte)(value | (1 << n));
+        }
+
+        public byte Res(byte value, int n)
+        {
+            // affected flags ----
+            return (byte)(value & ~(1 << n));
         }
     }
 }

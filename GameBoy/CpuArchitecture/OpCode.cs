@@ -52,16 +52,21 @@ namespace GameBoy.CpuArchitecture
 
         public override string ToString()
         {
-            return string.Format("0x{0:x2}: {1}", Code, Mnemonic);
+            return string.Format("0x00{0:x2}: {1}", Code, Mnemonic);
         }
     }
 
-    public class PrefixedOpCode: OpCode
+    public class PrefixOpCode: OpCode
     {
         public const byte prefixCode = 0xCB;
-        public PrefixedOpCode(byte prefixedCode, string mnemonic, int clockCycles, ushort operandLength, Operation operation)
-            : base(prefixedCode, mnemonic, clockCycles, operandLength, operation)
-        { }
+        public PrefixOpCode(byte code, string mnemonic, int clockCycles, ushort operandLength, Operation operation)
+            : base(code, mnemonic, clockCycles, operandLength, operation)
+        {
+        }
+        public override string ToString()
+        {
+            return string.Format("0x{0:x2}{1:x2}: {2}", prefixCode, Code, Mnemonic);
+        }
     }
 
     public class InvalidOpCode: OpCode
