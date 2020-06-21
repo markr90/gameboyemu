@@ -2,6 +2,7 @@
 using System;
 using System.Net.Sockets;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 using static GameBoy.CpuArchitecture.RegisterFlags;
 
 namespace GameBoy.CpuArchitecture
@@ -367,9 +368,45 @@ namespace GameBoy.CpuArchitecture
             _registers.SetFlags(N);
         }
 
-        public void Daa()
+        public byte Daa(byte value)
         {
-            // TODO implement
+            // source : https://ehaskins.com/2018-01-30%20Z80%20DAA/
+            // For addition: Trick is to add 6 to nibble that have had carries happen or if result is larger than decimal representation
+            // subtraction is similar, subtract 6 from digits only if carry flags set
+            var result = value;
+
+            _registers.ClearFlags(Z | C);            
+
+            if (!_registers.AreFlagsSet(N)) 
+            {
+                if (_registers.AreFlagsSet(C) || value > 0x99)
+                {
+                    result += 0x60;
+                    _registers.SetFlags(C);
+                }
+                if (_registers.AreFlagsSet(H) || (value & 0x0F) > 0x09)
+                {
+                    result += 0x06;
+                }
+            }
+            else
+            {
+                if (_registers.AreFlagsSet(C))
+                {
+                    result -= 0x60;
+                }
+                if (_registers.AreFlagsSet(H))
+                {
+                    result -= 0x06;
+                }
+            }
+
+
+            if (result == 0)
+                _registers.SetFlags(Z);
+
+            _registers.ClearFlags(H);
+            return result;
         }
     }
 }

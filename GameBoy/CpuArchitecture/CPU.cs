@@ -68,6 +68,18 @@ namespace GameBoy.CpuArchitecture
             ushort jumpTo = unchecked((ushort)(PC + r8));
             return JumpConditional(opCode, jumpTo, conditionalCheck);
         }
+        public int JumpConditional(OpCode opCode, ushort address, bool conditionalCheck)
+        {
+            if (conditionalCheck)
+            {
+                Jump(address);
+                return opCode.ClockCycles;
+            }
+            else
+            {
+                return opCode.ClockCyclesAlt;
+            }
+        }
 
         public void Jump(ushort address)
         {
@@ -116,18 +128,6 @@ namespace GameBoy.CpuArchitecture
                 return opcode.ClockCycles;
             }
             return opcode.ClockCyclesAlt;
-        }
-        public int JumpConditional(OpCode opCode, ushort address, bool conditionalCheck)
-        {
-            if (conditionalCheck)
-            {
-                Jump(address);
-                return opCode.ClockCycles;
-            }
-            else
-            {
-                return opCode.ClockCyclesAlt;
-            }
         }
 
         public void EnableInterrupts()
