@@ -17,15 +17,15 @@ namespace GameBoy.CpuArchitecture
         public Registers Registers { get; }
         public MemoryController MemController { get; }
         public Alu Alu { get; }
-        private Disassembler disassembler;
         private Instruction _nextInstruction = new Instruction();
 
         public readonly double CyclesPerSecond = OfficalClockFrequency;
+        public readonly int CyclesPerFrame = 70224; // Official gameboy had 70224 cycles per frame at 59.7275 fps
         private ulong _ticks;
-        private byte[] operandBlock = new byte[4];
 
         public ushort SP;
         public ushort PC;
+        private byte[] operandBuffer = new byte[2];
 
         private InterruptFlags IE;
         private InterruptFlags IF;
@@ -36,15 +36,29 @@ namespace GameBoy.CpuArchitecture
             Registers = new Registers();
             MemController = new MemoryController(device);
             Alu = new Alu(Registers);
-            disassembler = new Disassembler(MemController);
         }
 
         public int Step()
         {
             int cycles = 0;
-            disassembler.FetchInstruction(ref PC, ref _nextInstruction);
+            FetchInstruction();
             cycles = _nextInstruction.Execute(this);
             return cycles;
+        }
+
+        private void FetchInstruction()
+        {
+            byte code = MemController.Read(PC++);
+            Console.WriteLine("Trying to read code: {0:x2}", code);
+
+            OpCode opcode = code == OpCodes.ExtendedTableOpCode
+                ? OpCodes.PrefixedOpCodes[PC++]
+                : OpCodes.SingleByteOpCodes[code];
+
+            for (ushort i = 0; i < opcode.OperandLength; i++)
+                operandBuffer[i] = MemController.Read(PC++);
+
+            _nextInstruction.Set(opcode, operandBuffer);
         }
 
         public void PrintRegister()

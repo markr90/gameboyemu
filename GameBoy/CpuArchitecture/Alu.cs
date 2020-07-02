@@ -1,8 +1,6 @@
-﻿using GameBoy.CpuArchitecture;
+﻿
+using GameBoy.CpuArchitecture;
 using System;
-using System.Net.Sockets;
-using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
 using static GameBoy.CpuArchitecture.RegisterFlags;
 
 namespace GameBoy.CpuArchitecture
@@ -88,11 +86,6 @@ namespace GameBoy.CpuArchitecture
 
         }
 
-        /// <summary>
-        /// Adds target value to value of register A
-        /// </summary>
-        /// <param name="targetValue"></param>
-        /// <returns></returns>
         public byte Add(byte a, byte targetValue)
         {
             // affected flags z0hc
@@ -122,11 +115,6 @@ namespace GameBoy.CpuArchitecture
             return PerformMath(a, targetValue, (x, y) => x + y + carry, Z | H | C);
         }
 
-        /// <summary>
-        /// Subtracts target value to value of register A
-        /// </summary>
-        /// <param name="targetValue"></param>
-        /// <returns></returns>
         public byte Sub(byte a, byte targetValue)
         {
             // affected flags z1hc
@@ -142,22 +130,12 @@ namespace GameBoy.CpuArchitecture
             return PerformMath(a, targetValue, (x, y) => x - y - carry, Z | H | C);
         }
 
-        /// <summary>
-        /// Increments target value by one
-        /// </summary>
-        /// <param name="targetValue"></param>
-        /// <returns></returns>
         public ushort Inc(ushort targetValue)
         {
             // affected flags ----
             return PerformMath(targetValue, (ushort)1, (x, y) => x + y, None);
         }
 
-        /// <summary>
-        /// Increments target value by one
-        /// </summary>
-        /// <param name="targetValue"></param>
-        /// <returns></returns>
         public byte Inc(byte targetValue)
         {
             // affected flags z0h-
@@ -371,6 +349,7 @@ namespace GameBoy.CpuArchitecture
 
         public byte Daa(byte value)
         {
+            // affected flags z-0c
             // source : https://ehaskins.com/2018-01-30%20Z80%20DAA/
             // For addition: Trick is to add 6 to nibble that have had carries happen or if result is larger than decimal representation
             // subtraction is similar, subtract 6 from digits only if carry flags set
