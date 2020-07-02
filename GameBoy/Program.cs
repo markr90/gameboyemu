@@ -1,6 +1,6 @@
 ﻿using System;
-using GameBoy.CpuArchitecture;
-using GameBoy.Device;
+using GameBoy.DeviceComponents;
+using GameBoy.Main;
 
 namespace GameBoy
 {

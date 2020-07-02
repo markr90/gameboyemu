@@ -1,9 +1,8 @@
 ﻿using GameBoy.CpuArchitecture;
-using GameBoy.Device;
+using GameBoy.Main;
 using System;
-using System.Runtime.InteropServices;
 
-namespace GameBoy.CpuArchitecture
+namespace GameBoy.DeviceComponents
 {
     public class CPU
     {
@@ -30,6 +29,7 @@ namespace GameBoy.CpuArchitecture
         private InterruptFlags IE;
         private InterruptFlags IF;
         private bool IME;
+        private bool _isHalted;
 
         public CPU(GameBoyDevice device)
         {
@@ -38,11 +38,23 @@ namespace GameBoy.CpuArchitecture
             Alu = new Alu(Registers);
         }
 
+        public void Initialize()
+        {
+            _isHalted = false;
+        }
+
         public int Step()
         {
             int cycles = 0;
-            FetchInstruction();
-            cycles = _nextInstruction.Execute(this);
+            if (_isHalted)
+            {
+                cycles = 4; // 4 clock cycles even when halted
+            }
+            else
+            {
+                FetchInstruction();
+                cycles = _nextInstruction.Execute(this);
+            }
             return cycles;
         }
 
@@ -58,17 +70,17 @@ namespace GameBoy.CpuArchitecture
             _nextInstruction.Set(opcode);
         }
 
+        public byte ReadOperand8()
+        {
+            operandBuffer[0] = MemController.Read(PC++);
+            return operandBuffer[0];
+        }
+
         public ushort ReadOperand16()
         {
             operandBuffer[0] = MemController.Read(PC++);
             operandBuffer[1] = MemController.Read(PC++);
             return BitConverter.ToUInt16(operandBuffer, 0);
-        }
-
-        public byte ReadOperand8()
-        {
-            operandBuffer[0] = MemController.Read(PC++);
-            return operandBuffer[0];
         }
 
         public void PrintRegister()
@@ -131,6 +143,7 @@ namespace GameBoy.CpuArchitecture
 
         public void Halt() 
         {
+            _isHalted = true;
         }
     }
 }

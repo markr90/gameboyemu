@@ -1,10 +1,9 @@
-﻿using System;
-using System.CodeDom;
-using System.Runtime.InteropServices;
-using GameBoy.CpuArchitecture;
-using GameBoy.Device;
+﻿
 
-namespace GameBoy.CpuArchitecture
+using GameBoy.Main;
+using System;
+
+namespace GameBoy.DeviceComponents
 {
     /// <summary>
     ///  Delegates memory address requests to the correct component

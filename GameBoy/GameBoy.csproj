@@ -44,16 +44,16 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CpuArchitecture\Alu.cs" />
-    <Compile Include="CpuArchitecture\CPU.cs" />
+    <Compile Include="DeviceComponents\CPU.cs" />
     <Compile Include="CpuArchitecture\Instruction.cs" />
     <Compile Include="CpuArchitecture\OpCode.cs" />
     <Compile Include="CpuArchitecture\OpCodes.cs" />
     <Compile Include="CpuArchitecture\FlagTypes.cs" />
     <Compile Include="CpuArchitecture\Registers.cs" />
-    <Compile Include="Device\Memory.cs" />
-    <Compile Include="CpuArchitecture\MemoryController.cs" />
-    <Compile Include="Device\Device.cs" />
-    <Compile Include="Device\IMemoryBus.cs" />
+    <Compile Include="DeviceComponents\Memory.cs" />
+    <Compile Include="DeviceComponents\MemoryController.cs" />
+    <Compile Include="Main\Device.cs" />
+    <Compile Include="DeviceComponents\IMemoryBus.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

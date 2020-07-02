@@ -1,7 +1,8 @@
 ﻿using System;
-using GameBoy.CpuArchitecture;
+using GameBoy.DeviceComponents;
+using GameBoy.Main;
 
-namespace GameBoy.Device
+namespace GameBoy.Main
 {
     public class GameBoyDevice
     {
@@ -15,6 +16,13 @@ namespace GameBoy.Device
         {
             Cpu = new CPU(this);
             InternalMemory = new Memory(0x10000); // 64 KB
+        }
+
+        public void Start()
+        {
+            Cpu.Initialize();
+            // LoadRom();
+
         }
     }
 }

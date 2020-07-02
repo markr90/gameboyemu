@@ -1,5 +1,7 @@
 ﻿
+
 using GameBoy.CpuArchitecture;
+using GameBoy.DeviceComponents;
 using System;
 using static GameBoy.CpuArchitecture.RegisterFlags;
 

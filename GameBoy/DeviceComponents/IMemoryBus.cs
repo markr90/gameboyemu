@@ -1,5 +1,5 @@
 ﻿
-namespace GameBoy.Device
+namespace GameBoy.DeviceComponents
 {
     public interface IMemoryBus
     {
