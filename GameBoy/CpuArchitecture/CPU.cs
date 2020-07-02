@@ -55,10 +55,20 @@ namespace GameBoy.CpuArchitecture
                 ? OpCodes.PrefixedOpCodes[PC++]
                 : OpCodes.SingleByteOpCodes[code];
 
-            for (ushort i = 0; i < opcode.OperandLength; i++)
-                operandBuffer[i] = MemController.Read(PC++);
+            _nextInstruction.Set(opcode);
+        }
 
-            _nextInstruction.Set(opcode, operandBuffer);
+        public ushort ReadOperand16()
+        {
+            operandBuffer[0] = MemController.Read(PC++);
+            operandBuffer[1] = MemController.Read(PC++);
+            return BitConverter.ToUInt16(operandBuffer, 0);
+        }
+
+        public byte ReadOperand8()
+        {
+            operandBuffer[0] = MemController.Read(PC++);
+            return operandBuffer[0];
         }
 
         public void PrintRegister()
@@ -75,24 +85,6 @@ namespace GameBoy.CpuArchitecture
         {
             ushort jumpTo = unchecked((ushort)(PC + r8));
             Jump(jumpTo);
-        }
-
-        public int JumpRelativeConditional(OpCode opCode, sbyte r8, bool conditionalCheck)
-        {
-            ushort jumpTo = unchecked((ushort)(PC + r8));
-            return JumpConditional(opCode, jumpTo, conditionalCheck);
-        }
-        public int JumpConditional(OpCode opCode, ushort address, bool conditionalCheck)
-        {
-            if (conditionalCheck)
-            {
-                Jump(address);
-                return opCode.ClockCycles;
-            }
-            else
-            {
-                return opCode.ClockCyclesAlt;
-            }
         }
 
         public void Jump(ushort address)
@@ -118,30 +110,10 @@ namespace GameBoy.CpuArchitecture
             PC = Pop();
         }
 
-        public int RetConditional(OpCode opcode, bool conditionalCheck)
-        {
-            if (conditionalCheck)
-            {
-                Ret();
-                return opcode.ClockCycles;
-            }
-            return opcode.ClockCyclesAlt;
-        }
-
         public void Call(ushort address)
         {
             Push(PC);
             PC = address;
-        }
-
-        public int CallConditional(OpCode opcode, ushort address, bool conditionalFlag)
-        {
-            if (conditionalFlag)
-            {
-                Call(address);
-                return opcode.ClockCycles;
-            }
-            return opcode.ClockCyclesAlt;
         }
 
         public void EnableInterrupts()
